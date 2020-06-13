@@ -34,24 +34,33 @@ func Open(params string) (DB, error) {
 		return nil, err
 	}
 
-	path := kvs.GetString("path", "")
-	if path == "" {
-		return nil, ErrNoPath
-	}
+	var ldb DB
 
-	base, err := leveldb.OpenFile(path, &opt.Options{
-		CompactionTableSize: 16,
-		WriteBuffer:         16 * 2,
-		Compression:         opt.SnappyCompression,
-		ReadOnly:            false,
-	})
+	if kvs.GetBool("test", false) {
 
-	if err != nil {
-		return nil, err
-	}
+		ldb = newStub()
 
-	ldb := &db{
-		base: base,
+	} else {
+
+		path := kvs.GetString("path", "")
+		if path == "" {
+			return nil, ErrNoPath
+		}
+
+		base, err := leveldb.OpenFile(path, &opt.Options{
+			CompactionTableSize: 16,
+			WriteBuffer:         16 * 2,
+			Compression:         opt.SnappyCompression,
+			ReadOnly:            false,
+		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		ldb = &db{
+			base: base,
+		}
 	}
 
 	if kvs.GetBool("global", false) {
