@@ -7,6 +7,7 @@ import (
 
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
+	"github.com/syndtr/goleveldb/leveldb/util"
 )
 
 type DB interface {
@@ -14,8 +15,12 @@ type DB interface {
 	Get(key []byte) []byte
 	Has(key []byte) bool
 	Set(key, value []byte)
+	Prefix(prefix []byte, fn PairIteratorFunc)
+	Range(from []byte, to []byte, fn PairIteratorFunc)
 	Close()
 }
+
+type PairIteratorFunc func(key []byte, value []byte) bool
 
 type db struct {
 	base *leveldb.DB
@@ -127,4 +132,42 @@ func Delete(key []byte) {
 
 func Close() {
 	gdb.Close()
+}
+
+func (base *db) Prefix(prefix []byte, fn PairIteratorFunc) {
+	if base == nil || base.base == nil {
+		return
+	}
+
+	iter := base.base.NewIterator(util.BytesPrefix(prefix), nil)
+	defer iter.Release()
+
+	for iter.Next() {
+		if !fn(iter.Key(), iter.Value()) {
+			return
+		}
+	}
+}
+
+func (base *db) Range(from []byte, to []byte, fn PairIteratorFunc) {
+	if base == nil || base.base == nil {
+		return
+	}
+
+	iter := base.base.NewIterator(&util.Range{Start: from, Limit: to}, nil)
+	defer iter.Release()
+
+	for iter.Next() {
+		if !fn(iter.Key(), iter.Value()) {
+			return
+		}
+	}
+}
+
+func Prefix(prefix []byte, fn PairIteratorFunc) {
+	gdb.Prefix(prefix, fn)
+}
+
+func Range(from []byte, to []byte, fn PairIteratorFunc) {
+	gdb.Range(from, to, fn)
 }

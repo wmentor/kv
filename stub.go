@@ -79,3 +79,41 @@ func (s *stub) Set(key []byte, value []byte) {
 
 	s.lst.PushBack([][]byte{key, value})
 }
+
+func (s *stub) Prefix(prefix []byte, fn PairIteratorFunc) {
+	if s == nil {
+		return
+	}
+
+	size := len(prefix)
+
+	for e := s.lst.Front(); e != nil; e = e.Next() {
+		v := e.Value.([][]byte)
+		key := v[0]
+		value := v[1]
+		if len(key) >= size {
+			if bytes.Compare(key[:size], prefix) == 0 {
+				if !fn(key, value) {
+					return
+				}
+			}
+		}
+	}
+}
+
+func (s *stub) Range(from []byte, to []byte, fn PairIteratorFunc) {
+	if s == nil {
+		return
+	}
+
+	for e := s.lst.Front(); e != nil; e = e.Next() {
+		v := e.Value.([][]byte)
+		key := v[0]
+		value := v[1]
+		if bytes.Compare(key, from) >= 0 && bytes.Compare(key, to) <= 0 {
+			if !fn(key, value) {
+				return
+			}
+		}
+	}
+}
