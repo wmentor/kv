@@ -23,6 +23,8 @@ type db struct {
 
 var (
 	ErrNoPath error = errors.New("db path not entered")
+
+	gdb DB = nil
 )
 
 func Open(params string) (DB, error) {
@@ -50,6 +52,10 @@ func Open(params string) (DB, error) {
 
 	ldb := &db{
 		base: base,
+	}
+
+	if kvs.GetBool("global", false) {
+		gdb = ldb
 	}
 
 	return ldb, nil
@@ -93,4 +99,23 @@ func (base *db) Set(key, value []byte) {
 			}
 		}
 	}
+}
+
+func Set(key, value []byte) {
+	gdb.Set(key, value)
+}
+
+func Get(key []byte) []byte {
+	return gdb.Get(key)
+}
+
+func Has(key []byte) bool {
+	return gdb.Has(key)
+}
+func Delete(key []byte) {
+	gdb.Delete(key)
+}
+
+func Close() {
+	gdb.Close()
 }
