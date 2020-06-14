@@ -110,7 +110,7 @@ func (s *stub) Range(from []byte, to []byte, fn PairIteratorFunc) {
 		v := e.Value.([][]byte)
 		key := v[0]
 		value := v[1]
-		if bytes.Compare(key, from) >= 0 && bytes.Compare(key, to) <= 0 {
+		if bytes.Compare(key, from) >= 0 && bytes.Compare(key, to) < 0 {
 			if !fn(key, value) {
 				return
 			}
