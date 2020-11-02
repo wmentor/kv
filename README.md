@@ -4,7 +4,7 @@ lbase is simple key/value storage based on *syndtr/goleveldb* library.
 
 * Written on tiny Go
 * Go library
-* Require Go version >= 1.2
+* Require Go version >= 1.15
 * Simple API
 * Persistent key/value storage
 * Use LSM-tree engine
@@ -13,7 +13,7 @@ lbase is simple key/value storage based on *syndtr/goleveldb* library.
 # Install
 
 ```
-go get github.com/wmentor/lbase
+go get github.com/wmentor/kv
 ```
 
 # Usage
@@ -24,11 +24,11 @@ package main
 import (
   "fmt"
 
-  "github.com/wmentor/lbase"
+  "github.com/wmentor/kv"
 )
 
 func main() {
-  db, err := lbase.Open("path=./base")
+  db, err := kv.Open("path=./base")
 	if err != nil {
 		panic(err)
 	}
@@ -80,11 +80,11 @@ Work with global context:
 package main
 
 import (
-  "github.com/wmentor/lbase"
+  "github.com/wmentor/kv"
 )
 
 func main() {
-  _, err := lbase.Open("path=./base global=1")
+  _, err := kv.Open("path=./base global=1")
 	if err != nil {
 		panic(err)
 	}
@@ -102,11 +102,11 @@ Work with test context:
 package main
 
 import (
-  "github.com/wmentor/lbase"
+  "github.com/wmentor/kv"
 )
 
 func main() {
-  _, err := lbase.Open("test=1 global=1")
+  _, err := kv.Open("test=1 global=1")
 	if err != nil {
 		panic(err)
 	}
