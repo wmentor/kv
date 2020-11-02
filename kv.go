@@ -68,7 +68,7 @@ func Open(params string) (DB, error) {
 		}
 	}
 
-	if kvs.GetBool("global", false) {
+	if kvs.GetBool("global", true) {
 		gdb = ldb
 	}
 
@@ -100,7 +100,9 @@ func (base *db) Has(key []byte) bool {
 }
 
 func (base *db) Delete(key []byte) {
-	base.Set(key, nil)
+	if base != nil {
+		base.Set(key, nil)
+	}
 }
 
 func (base *db) Set(key, value []byte) {
