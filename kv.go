@@ -2,8 +2,12 @@ package kv
 
 import (
 	"errors"
+	"fmt"
+	"os/exec"
+	"time"
 
 	"github.com/wmentor/dsn"
+	"github.com/wmentor/log"
 
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
@@ -172,4 +176,41 @@ func Prefix(prefix []byte, fn PairIteratorFunc) {
 
 func Range(from []byte, to []byte, fn PairIteratorFunc) {
 	gdb.Range(from, to, fn)
+}
+
+func CopyWork(src string, fn func(DB)) {
+
+	tmpProc := func() bool {
+
+		defer time.Sleep(time.Second * 2)
+
+		ts := time.Now().Unix()
+
+		tmpName := fmt.Sprintf("%s-%d-%d", src, ts, time.Now().UnixNano()%1000)
+
+		cmd := fmt.Sprintf("cp -r %s %s", src, tmpName)
+
+		exec.Command("sh", "-c", cmd).Run()
+
+		defer func() {
+			exec.Command("sh", "-c", "rm -rf "+tmpName).Run()
+		}()
+
+		db, err := Open(fmt.Sprintf("global=0 path=" + tmpName))
+		if err != nil {
+			log.Error(err.Error() + " " + tmpName)
+			return false
+		}
+		defer db.Close()
+
+		fn(db)
+
+		return true
+	}
+
+	for i := 0; i < 5; i++ {
+		if tmpProc() {
+			return
+		}
+	}
 }
