@@ -1,4 +1,4 @@
-package lbase
+package kv
 
 import (
 	"errors"

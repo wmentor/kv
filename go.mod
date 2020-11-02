@@ -1,6 +1,6 @@
-module github.com/wmentor/lbase
+module github.com/wmentor/kv
 
-go 1.14
+go 1.15
 
 require (
 	github.com/syndtr/goleveldb v1.0.0
