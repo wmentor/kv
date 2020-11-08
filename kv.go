@@ -138,6 +138,7 @@ func Delete(key []byte) {
 
 func Close() {
 	gdb.Close()
+	gdb = nil
 }
 
 func (base *db) Prefix(prefix []byte, fn PairIteratorFunc) {
