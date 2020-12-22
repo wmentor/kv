@@ -1,4 +1,4 @@
-lbase is simple key/value storage based on *syndtr/goleveldb* library.
+kv is simple key/value storage based on *syndtr/goleveldb* library.
 
 # Summary
 
@@ -88,10 +88,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer lbase.Close()
+	defer kv.Close()
 
-  lbase.Set([]byte("1"), []byte("11"))
-  lbase.Set([]byte("10"), []byte("1100"))
+  kv.Set([]byte("1"), []byte("11"))
+  kv.Set([]byte("10"), []byte("1100"))
   ...
 }
 ```
@@ -110,10 +110,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer lbase.Close()
+	defer kv.Close()
 
-  lbase.Set([]byte("1"), []byte("11"))
-  lbase.Set([]byte("10"), []byte("1100"))
+  kv.Set([]byte("1"), []byte("11"))
+  kv.Set([]byte("10"), []byte("1100"))
   ...
 }
 ```
