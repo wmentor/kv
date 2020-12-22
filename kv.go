@@ -57,8 +57,8 @@ func Open(params string) (DB, error) {
 		}
 
 		base, err := leveldb.OpenFile(path, &opt.Options{
-			CompactionTableSize: 16,
-			WriteBuffer:         16 * 2,
+			CompactionTableSize: 16 * 1024 * 1024,
+			WriteBuffer:         16 * 2 * 1024 * 1024,
 			Compression:         opt.SnappyCompression,
 			ReadOnly:            false,
 		})
